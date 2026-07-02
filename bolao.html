@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bolão da Loteca</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #EAF3EE;
+    --paper-dark: #F6FBF6;
+    --ink: #16232E;
+    --ink-soft: #556270;
+    --stamp: #1E5FA8;
+    --stamp-dark: #123F73;
+    --stamp-light: #F5C518;
+    --green: #1E9E5A;
+    --green-dark: #146B3E;
+    --green-light: #6FBF8B;
+    --blue: #1E5FA8;
+    --blue-dark: #123F73;
+    --yellow: #F5C518;
+    --yellow-dark: #C79A0A;
+    --line: #A9CFC0;
+    --paper-line: rgba(22,35,46,0.07);
+    --shadow-c: rgba(18,63,115,0.20);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 8% -10%, rgba(30,95,168,0.22), transparent 45%),
+      radial-gradient(circle at 100% 0%, rgba(245,197,24,0.28), transparent 42%),
+      radial-gradient(circle at 50% 100%, rgba(30,158,90,0.18), transparent 55%),
+      repeating-linear-gradient(0deg, transparent, transparent 27px, var(--paper-line) 28px),
+      linear-gradient(160deg, #E4F0F7 0%, #EAF3EE 45%, #FBF6E3 100%);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    padding:32px 16px 60px;
+  }
+  .wrap{max-width:660px;margin:0 auto;}
+  .masthead{
+    text-align:center;
+    margin-bottom:26px;
+    position:relative;
+  }
+  .masthead h1{
+    font-family:'Special Elite',monospace;
+    font-size:38px;
+    letter-spacing:1px;
+    margin:0 0 6px;
+    color:var(--ink);
+  }
+  .masthead .sub{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:2px;
+    color:var(--ink-soft);
+  }
+  .card{
+    background:linear-gradient(180deg, var(--paper-dark), #EEF6EF);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:24px;
+    margin-bottom:18px;
+    position:relative;
+    box-shadow:0 10px 26px -12px rgba(36,31,23,0.25), 0 2px 6px rgba(36,31,23,0.06);
+  }
+  .card h2{
+    font-family:'Special Elite',monospace;
+    font-size:19px;
+    margin:0 0 16px;
+    display:flex;align-items:center;gap:10px;
+    justify-content:space-between;
+    flex-wrap:wrap;
+  }
+  .stamp-badge{
+    display:inline-block;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    font-weight:700;
+    letter-spacing:1.5px;
+    color:var(--stamp-dark);
+    background:rgba(30,95,168,0.12);
+    border:1.5px solid var(--stamp);
+    border-radius:999px;
+    padding:4px 11px;
+    text-transform:uppercase;
+  }
+  .stamp-badge.on{color:var(--green-dark);background:rgba(46,125,82,0.12);border-color:var(--green);}
+  label{
+    display:block;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:1.5px;
+    color:var(--ink-soft);
+    margin:14px 0 6px;
+  }
+  input[type=text], input[type=password], input[type=number]{
+    width:100%;
+    padding:11px 13px;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    background:#fff;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    color:var(--ink);
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(46,125,82,0.15);}
+  input:disabled{background:#EFE9D6;color:var(--ink-soft);}
+  .row{display:flex;gap:10px;}
+  .row > *{flex:1;}
+  .score-input{
+    width:58px !important;
+    text-align:center;
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:700;
+    font-size:19px;
+    padding:9px 4px;
+    border-radius:10px;
+  }
+  button{
+    font-family:'Special Elite',monospace;
+    font-size:13px;
+    letter-spacing:0.5px;
+    cursor:pointer;
+    border-radius:10px;
+    padding:12px 18px;
+    background:#fff;
+    color:var(--ink);
+    border:1.5px solid var(--line);
+    transition:transform .1s ease, box-shadow .1s ease;
+  }
+  button:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(36,31,23,0.12);}
+  button:active{transform:translateY(0);}
+  button.primary{background:linear-gradient(120deg, var(--stamp), var(--stamp-dark));color:#fff;border:none;box-shadow:0 6px 16px var(--shadow-c);}
+  button.green{background:linear-gradient(120deg, var(--green), var(--green-dark));color:#fff;border:none;box-shadow:0 6px 16px rgba(29,90,58,0.25);}
+  button.blue{background:linear-gradient(120deg, #3A76A8, var(--blue));color:#fff;border:none;}
+  button.ghost{background:transparent;box-shadow:none;}
+  button.small{padding:7px 12px;font-size:11px;border-radius:8px;}
+  button.block{width:100%;margin-top:16px;}
+  button:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none;}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+  .tabs button{background:rgba(255,255,255,0.6);flex:1;min-width:110px;border-radius:12px;}
+  .tabs button.active{background:var(--ink);color:var(--paper-dark);border-color:var(--ink);}
+  .ticket{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 4px;border-bottom:1px dashed var(--line);
+    gap:12px;flex-wrap:wrap;position:relative;
+  }
+  .ticket:last-child{border-bottom:none;}
+  .team-pair{display:flex;align-items:center;gap:10px;flex:1;min-width:180px;}
+  .avatar{
+    width:32px;height:32px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:12px;color:#fff;
+    flex-shrink:0;
+  }
+  .teams-txt{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13.5px;}
+  .teams-txt .vs{color:var(--stamp);font-weight:700;margin:0 4px;font-size:11px;}
+  .badge{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.5px;
+    text-transform:uppercase;padding:3px 8px;border-radius:999px;
+    border:1px solid var(--ink-soft);color:var(--ink-soft);white-space:nowrap;
+  }
+  .badge.done{border-color:var(--green);color:var(--green-dark);background:rgba(46,125,82,0.1);}
+  .badge.closed{border-color:var(--yellow-dark);color:var(--yellow-dark);background:rgba(245,197,24,0.18);}
+  .badge.confirmed{border-color:var(--blue);color:var(--blue);background:rgba(47,95,138,0.1);}
+  .list-item{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 4px;border-bottom:1px solid var(--paper-line);gap:8px;flex-wrap:wrap;
+  }
+  .list-item:last-child{border-bottom:none;}
+  .name{font-weight:600;display:flex;align-items:center;gap:8px;}
+  .muted{color:var(--ink-soft);font-size:12.5px;}
+  .actions{display:flex;gap:6px;flex-wrap:wrap;}
+  table{width:100%;border-collapse:collapse;font-family:'IBM Plex Mono',monospace;font-size:13px;}
+  th,td{padding:10px 6px;text-align:left;border-bottom:1px solid var(--paper-line);}
+  th{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--ink-soft);}
+  tr:first-child td{font-weight:700;}
+  tr:first-child{background:linear-gradient(90deg, rgba(245,197,24,0.25), transparent);}
+  .rank-num{color:var(--stamp);font-weight:700;}
+  .topline{
+    display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;
+    background:rgba(255,255,255,0.55);border-radius:14px;padding:10px 16px;border:1px solid var(--line);
+  }
+  .who{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft);}
+  .who b{color:var(--ink);}
+  .msg{
+    font-family:'IBM Plex Mono',monospace;font-size:12.5px;
+    padding:12px 14px;border-left:4px solid var(--green);border-radius:8px;
+    background:rgba(46,125,82,0.1);margin-bottom:16px;
+  }
+  .msg.err{border-color:var(--yellow-dark);background:rgba(245,197,24,0.15);}
+  .helper{font-size:12px;color:var(--ink-soft);margin-top:6px;}
+  .footer-note{
+    text-align:center;font-size:11.5px;color:var(--ink-soft);margin-top:28px;
+    font-family:'IBM Plex Mono',monospace;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;
+    display:flex;align-items:center;justify-content:center;gap:10px;
+  }
+  .setup-match{border:1px dashed var(--line);padding:12px;border-radius:12px;margin-bottom:10px;background:rgba(255,255,255,0.4);}
+  select{
+    width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;
+    background:#fff;font-family:'Inter',sans-serif;font-size:14px;color:var(--ink);
+  }
+  .pts{font-family:'IBM Plex Mono',monospace;font-weight:700;}
+  .pts3{color:var(--stamp-dark);}
+  .pts1{color:var(--green-dark);}
+  .confirm-box{
+    margin-top:16px;padding:16px;border-radius:12px;
+    background:linear-gradient(120deg, rgba(47,95,138,0.08), rgba(46,125,82,0.08));
+    border:1.5px dashed var(--blue);text-align:center;
+  }
+  .confirm-box p{margin:0 0 10px;font-size:13px;color:var(--ink-soft);}
+  .pix-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .pix-tile{
+    background:rgba(255,255,255,0.55);border:1.5px dashed var(--green);border-radius:12px;
+    padding:14px;text-align:center;
+  }
+  .pix-label{display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px;}
+  .pix-value{display:block;font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:700;color:var(--green-dark);word-break:break-all;}
+  .pix-value.mono{font-size:13.5px;color:var(--blue);}
+  .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .stat-tile{
+    background:rgba(255,255,255,0.55);border:1px solid var(--line);border-radius:12px;
+    padding:16px 12px;text-align:center;
+  }
+  .stat-num{display:block;font-family:'Special Elite',monospace;font-size:24px;color:var(--stamp-dark);}
+  .stat-label{display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-soft);margin-top:4px;}
+  @media (max-width:480px){
+    .masthead h1{font-size:29px;}
+    .card{padding:18px;border-radius:14px;}
+    .pix-grid, .stats-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <div class="masthead">
+    <h1>Bolão da Loteca</h1>
+    <div class="sub">PREENCHA &middot; CONFIRME &middot; TORÇA</div>
+  </div>
+  <div id="content"></div>
+  <div class="footer-note">🚨 BOLÃO DA LOTECA &middot; SEM VALOR LEGAL &middot; SÓ PARA DIVERSÃO 🚨</div>
+</div>
+
+<script>
+let state = { config: null, matches: [], moderators: [], participants: [], bets: {} };
+let session = null; // {name, role}
+let view = 'home';
+let flash = null; // {type, text}
+
+const K = {
+  config: 'bolao:config',
+  matches: 'bolao:matches',
+  moderators: 'bolao:moderators',
+  participants: 'bolao:participants',
+  bets: 'bolao:bets',
+};
+
+const AVATAR_COLORS = ['#1E5FA8','#1E9E5A','#C79A0A','#2E86AB','#146B3E','#3E92CC'];
+function colorFor(str){
+  let h=0; for(let i=0;i<str.length;i++) h = str.charCodeAt(i) + ((h<<5)-h);
+  return AVATAR_COLORS[Math.abs(h) % AVATAR_COLORS.length];
+}
+function initials(str){
+  return (str||'?').trim().slice(0,2).toUpperCase();
+}
+function money(v){
+  const n = Number(v||0);
+  return 'R$ ' + n.toFixed(2).replace('.', ',');
+}
+
+function inviteLink(){
+  try{
+    const u = new URL(window.location.href);
+    return u.origin + u.pathname + u.search + '#convite';
+  }catch(e){
+    return window.location.href.split('#')[0] + '#convite';
+  }
+}
+function isInviteView(){
+  try{
+    return window.location.pathname.endsWith('/convite') || window.location.hash.indexOf('convite')>-1;
+  }catch(e){ return false; }
+}
+
+async function getKey(key){
+  try{
+    const r = await window.storage.get(key, true);
+    return r ? JSON.parse(r.value) : null;
+  }catch(e){ return null; }
+}
+async function setKey(key, val){
+  try{ await window.storage.set(key, JSON.stringify(val), true); }
+  catch(e){ console.error('storage set failed', key, e); }
+}
+
+async function loadState(){
+  const [config, matches, moderators, participants, bets] = await Promise.all([
+    getKey(K.config), getKey(K.matches), getKey(K.moderators), getKey(K.participants), getKey(K.bets)
+  ]);
+  state.config = config;
+  state.matches = matches || [];
+  state.moderators = moderators || [];
+  state.participants = participants || [];
+  state.bets = bets || {};
+}
+
+function setFlash(type, text){ flash = text ? {type, text} : null; }
+
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function outcome(h,a){ return h===a ? 'D' : (h>a ? 'H' : 'A'); }
+
+function betsRecord(name){
+  return state.bets[name] || { picks:{}, confirmed:false };
+}
+
+function computeScores(){
+  const approved = state.participants.filter(p=>p.status==='approved');
+  const finished = state.matches.filter(m=>m.homeScore!==null && m.homeScore!==undefined && m.awayScore!==null && m.awayScore!==undefined);
+  return approved.map(p=>{
+    let points=0, exact=0, correct=0;
+    const picks = betsRecord(p.name).picks || {};
+    finished.forEach(m=>{
+      const b = picks[m.id];
+      if(!b || b.h===null || b.h===undefined || b.a===null || b.a===undefined) return;
+      if(b.h===m.homeScore && b.a===m.awayScore){ points+=3; exact++; }
+      else if(outcome(b.h,b.a)===outcome(m.homeScore,m.awayScore)){ points+=1; correct++; }
+    });
+    return {name:p.name, points, exact, correct};
+  }).sort((a,b)=> b.points - a.points || a.name.localeCompare(b.name));
+}
+
+// ---------- ACTIONS ----------
+
+async function createBolao(){
+  const bolaoName = document.getElementById('setupBolaoName').value.trim();
+  const adminName = document.getElementById('setupAdminName').value.trim();
+  const adminPin = document.getElementById('setupAdminPin').value.trim();
+  const betValue = document.getElementById('setupBetValue').value;
+  const pixKey = document.getElementById('setupPixKey').value.trim();
+  const n = parseInt(document.getElementById('numMatches').value, 10);
+  if(!bolaoName || !adminName || !adminPin){ setFlash('err','Preencha nome do bolão, seu nome e a senha.'); render(); return; }
+  if(!n || n<1 || n>30){ setFlash('err','Número de jogos inválido.'); render(); return; }
+  const matches = [];
+  for(let i=0;i<n;i++){
+    const h = document.getElementById('mh_'+i).value.trim();
+    const a = document.getElementById('ma_'+i).value.trim();
+    if(!h || !a){ setFlash('err','Preencha os times de todos os jogos.'); render(); return; }
+    matches.push({id:'m'+i, home:h, away:a, homeScore:null, awayScore:null});
+  }
+  state.config = {
+    bolaoName, adminName, adminPin, bettingOpen:true, createdAt:Date.now(),
+    betValue: betValue===''? null : parseFloat(betValue),
+    pixKey: pixKey || ''
+  };
+  state.matches = matches;
+  state.moderators = [];
+  state.participants = [];
+  state.bets = {};
+  await Promise.all([
+    setKey(K.config,state.config), setKey(K.matches,state.matches),
+    setKey(K.moderators,state.moderators), setKey(K.participants,state.participants),
+    setKey(K.bets,state.bets)
+  ]);
+  session = {name: adminName, role:'admin'};
+  view='panel';
+  setFlash('ok','Bolão criado! Compartilhe este link com os participantes.');
+  render();
+}
+
+function genMatchRows(){
+  const n = parseInt(document.getElementById('numMatches').value,10) || 0;
+  const box = document.getElementById('matchRows');
+  const prevHome = {}, prevAway = {};
+  box.querySelectorAll('input[id^="mh_"]').forEach(inp=>{ prevHome[inp.id]=inp.value; });
+  box.querySelectorAll('input[id^="ma_"]').forEach(inp=>{ prevAway[inp.id]=inp.value; });
+  let html='';
+  for(let i=0;i<Math.min(Math.max(n,0),30);i++){
+    const hv = prevHome['mh_'+i] || '';
+    const av = prevAway['ma_'+i] || '';
+    html += `<div class="setup-match"><div class="row">
+      <div><label>Jogo ${i+1} · Mandante</label><input type="text" id="mh_${i}" placeholder="Time da casa" value="${esc(hv)}"></div>
+      <div><label>&nbsp;</label><input type="text" id="ma_${i}" placeholder="Time visitante" value="${esc(av)}"></div>
+    </div></div>`;
+  }
+  box.innerHTML = html;
+}
+
+async function loginAdmin(){
+  const pin = document.getElementById('adminPinInput').value.trim();
+  if(pin === state.config.adminPin){
+    session = {name: state.config.adminName, role:'admin'};
+    view='panel'; setFlash(null); render();
+  } else { setFlash('err','Senha de administrador incorreta.'); render(); }
+}
+
+function loginAsName(name){
+  const p = state.participants.find(x=>x.name===name && x.status==='approved');
+  if(!p){ setFlash('err','Não encontramos esse cadastro aprovado.'); render(); return; }
+  const role = state.moderators.includes(name) ? 'moderator' : 'participant';
+  session = {name, role};
+  view='panel'; setFlash(null); render();
+}
+
+async function registerPerson(){
+  const name = document.getElementById('regName').value.trim();
+  const pin = document.getElementById('regPin').value.trim();
+  if(!name || !pin){ setFlash('err','Preencha nome e senha.'); render(); return; }
+  if(state.participants.some(p=>p.name.toLowerCase()===name.toLowerCase())){
+    setFlash('err','Já existe alguém cadastrado com esse nome.'); render(); return;
+  }
+  state.participants.push({name, pin, status:'pending'});
+  await setKey(K.participants, state.participants);
+  setFlash('ok','Cadastro enviado! Aguarde a aprovação de um moderador ou do administrador.');
+  view='login'; render();
+}
+
+function logout(){ session=null; view='home'; setFlash(null); render(); }
+
+async function approveParticipant(name){
+  const p = state.participants.find(x=>x.name===name);
+  if(p) p.status='approved';
+  await setKey(K.participants, state.participants);
+  setFlash('ok', name+' foi aprovado(a) e já pode entrar no bolão.');
+  render();
+}
+async function rejectParticipant(name){
+  state.participants = state.participants.filter(x=>x.name!==name);
+  await setKey(K.participants, state.participants);
+  setFlash('ok', 'Cadastro de '+name+' recusado.');
+  render();
+}
+async function removeParticipant(name){
+  state.participants = state.participants.filter(x=>x.name!==name);
+  state.moderators = state.moderators.filter(x=>x!==name);
+  delete state.bets[name];
+  await Promise.all([setKey(K.participants,state.participants), setKey(K.moderators,state.moderators), setKey(K.bets,state.bets)]);
+  setFlash('ok', name+' foi removido(a) do bolão.');
+  render();
+}
+async function toggleModerator(name){
+  let msg;
+  if(state.moderators.includes(name)){ state.moderators = state.moderators.filter(x=>x!==name); msg=name+' não é mais moderador(a).'; }
+  else { state.moderators.push(name); msg=name+' agora é moderador(a).'; }
+  await setKey(K.moderators, state.moderators);
+  setFlash('ok', msg);
+  render();
+}
+async function copyInviteLink(){
+  const link = inviteLink();
+  try{
+    await navigator.clipboard.writeText(link);
+    setFlash('ok','Link de convite copiado! Cole onde quiser compartilhar com os participantes.');
+  }catch(e){
+    const inp = document.getElementById('inviteLinkInput');
+    if(inp){
+      inp.removeAttribute('disabled');
+      inp.select(); inp.setSelectionRange(0,99999);
+      try{ document.execCommand('copy'); setFlash('ok','Link copiado! Cole onde quiser compartilhar.'); }
+      catch(e2){ setFlash('err','Não foi possível copiar automaticamente. Selecione e copie o link manualmente.'); }
+      inp.setAttribute('disabled','disabled');
+    } else {
+      setFlash('err','Não foi possível copiar automaticamente. Copie o link na barra de endereço.');
+    }
+  }
+  render();
+}
+async function toggleBetting(){
+  state.config.bettingOpen = !state.config.bettingOpen;
+  await setKey(K.config, state.config);
+  setFlash('ok', state.config.bettingOpen? 'Apostas reabertas.' : 'Apostas encerradas.');
+  render();
+}
+async function refreshState(){
+  await loadState();
+  setFlash('ok','Dados atualizados.');
+  render();
+}
+function safeScore(v){
+  if(v===''||v===null||v===undefined) return null;
+  const n = parseInt(v,10);
+  if(isNaN(n) || n<0) return null;
+  return n;
+}
+
+async function clearFinishedMatches(){
+  const ok = window.confirm('Isso vai remover todos os jogos já encerrados desta rodada, reabrir as apostas e liberar novos palpites para todo mundo. Deseja continuar?');
+  if(!ok) return;
+  state.matches = state.matches.filter(m => !(m.homeScore!==null && m.homeScore!==undefined));
+  state.config.bettingOpen = true;
+  Object.keys(state.bets).forEach(name=>{ if(state.bets[name]) state.bets[name].confirmed = false; });
+  await Promise.all([setKey(K.matches,state.matches), setKey(K.config,state.config), setKey(K.bets,state.bets)]);
+  setFlash('ok','Jogos encerrados removidos. Apostas reabertas para a nova rodada.');
+  render();
+}
+function genNewMatchRows(){
+  const numEl = document.getElementById('numNewMatches');
+  const box = document.getElementById('newMatchRows');
+  if(!numEl || !box) return;
+  const n = parseInt(numEl.value,10) || 0;
+  const prevHome = {}, prevAway = {};
+  box.querySelectorAll('input[id^="nm_h_"]').forEach(inp=>{ prevHome[inp.id]=inp.value; });
+  box.querySelectorAll('input[id^="nm_a_"]').forEach(inp=>{ prevAway[inp.id]=inp.value; });
+  let html='';
+  for(let i=0;i<Math.min(Math.max(n,0),30);i++){
+    const hv = prevHome['nm_h_'+i] || '';
+    const av = prevAway['nm_a_'+i] || '';
+    html += `<div class="setup-match"><div class="row">
+      <div><label>Jogo novo ${i+1} · Mandante</label><input type="text" id="nm_h_${i}" placeholder="Time da casa" value="${esc(hv)}"></div>
+      <div><label>&nbsp;</label><input type="text" id="nm_a_${i}" placeholder="Time visitante" value="${esc(av)}"></div>
+    </div></div>`;
+  }
+  box.innerHTML = html;
+}
+async function addNewMatches(){
+  const n = parseInt(document.getElementById('numNewMatches').value,10) || 0;
+  if(!n || n<1){ setFlash('err','Informe quantos jogos deseja adicionar.'); render(); return; }
+  const newOnes = [];
+  for(let i=0;i<n;i++){
+    const h = document.getElementById('nm_h_'+i).value.trim();
+    const a = document.getElementById('nm_a_'+i).value.trim();
+    if(!h || !a){ setFlash('err','Preencha os times de todos os novos jogos.'); render(); return; }
+    newOnes.push({id:'m'+Date.now()+'_'+i, home:h, away:a, homeScore:null, awayScore:null});
+  }
+  state.matches = state.matches.concat(newOnes);
+  await setKey(K.matches, state.matches);
+  setFlash('ok', n+' novo(s) jogo(s) adicionado(s)!');
+  render();
+}
+async function saveResult(matchId){
+  const h = document.getElementById('res_h_'+matchId).value;
+  const a = document.getElementById('res_a_'+matchId).value;
+  const m = state.matches.find(x=>x.id===matchId);
+  m.homeScore = safeScore(h);
+  m.awayScore = safeScore(a);
+  await setKey(K.matches, state.matches);
+  setFlash('ok','Resultado salvo.');
+  render();
+}
+async function clearResult(matchId){
+  const m = state.matches.find(x=>x.id===matchId);
+  m.homeScore=null; m.awayScore=null;
+  await setKey(K.matches, state.matches);
+  setFlash('ok','Resultado removido.');
+  render();
+}
+async function updateTeams(matchId){
+  const h = document.getElementById('team_h_'+matchId).value.trim();
+  const a = document.getElementById('team_a_'+matchId).value.trim();
+  const m = state.matches.find(x=>x.id===matchId);
+  if(h) m.home=h; if(a) m.away=a;
+  await setKey(K.matches, state.matches);
+  setFlash('ok','Times atualizados.');
+  render();
+}
+async function saveBetInfo(){
+  const val = document.getElementById('betValueInput').value;
+  const pix = document.getElementById('pixKeyInput').value.trim();
+  state.config.betValue = val===''? null : parseFloat(val);
+  state.config.pixKey = pix;
+  await setKey(K.config, state.config);
+  setFlash('ok','Valor da aposta e chave Pix atualizados.');
+  render();
+}
+function collectPicksFromInputs(rec){
+  state.matches.forEach(m=>{
+    if(m.homeScore!==null && m.homeScore!==undefined) return; // jogo já finalizado, não sobrescreve
+    const h = document.getElementById('bet_h_'+m.id);
+    const a = document.getElementById('bet_a_'+m.id);
+    if(!h || !a) return;
+    rec.picks[m.id] = { h: safeScore(h.value), a: safeScore(a.value) };
+  });
+}
+async function saveBets(){
+  const rec = betsRecord(session.name);
+  if(rec.confirmed){ setFlash('err','Suas apostas já foram confirmadas e não podem ser alteradas.'); render(); return; }
+  collectPicksFromInputs(rec);
+  state.bets[session.name] = rec;
+  await setKey(K.bets, state.bets);
+  setFlash('ok','Palpites salvos! Quando terminar, não esqueça de confirmar suas apostas.');
+  render();
+}
+async function confirmBets(){
+  const rec = betsRecord(session.name);
+  if(rec.confirmed) return;
+  collectPicksFromInputs(rec);
+  const okConfirm = window.confirm(
+    'ATENÇÃO!\n\nAo confirmar suas apostas, elas ficam travadas e não será mais possível alterá-las.\n\nRevise seus palpites com cuidado antes de confirmar.\n\nDeseja confirmar suas apostas agora?'
+  );
+  if(!okConfirm) return;
+  rec.confirmed = true;
+  state.bets[session.name] = rec;
+  await setKey(K.bets, state.bets);
+  setFlash('ok','Apostas confirmadas! Boa sorte 🍀');
+  render();
+}
+
+// ---------- RENDER ----------
+
+function render(){
+  const el = document.getElementById('content');
+  el.innerHTML = flashHtml() + body();
+  if(!state.config){ genMatchRows(); }
+  if(session && session.role==='admin' && view==='panel'){ genNewMatchRows(); }
+}
+
+function flashHtml(){
+  if(!flash) return '';
+  const f = flash;
+  return `<div class="msg ${f.type==='err'?'err':''}">${esc(f.text)}</div>`;
+}
+
+function body(){
+  if(!state.config) return setupView();
+  if(!session) return loginView();
+  if(session.role==='admin') return adminView();
+  if(session.role==='moderator') return moderatorView();
+  return participantView();
+}
+
+function setupView(){
+  return `
+  <div class="card">
+    <h2>Criar novo bolão</h2>
+    <label>Nome do bolão</label>
+    <input type="text" id="setupBolaoName" placeholder="Ex: Bolão da Firma — Brasileirão 2026">
+    <div class="row">
+      <div><label>Seu nome (administrador)</label><input type="text" id="setupAdminName" placeholder="Seu nome"></div>
+      <div><label>Crie uma senha de admin</label><input type="password" id="setupAdminPin" placeholder="Senha"></div>
+    </div>
+    <div class="row">
+      <div><label>Valor da aposta (R$)</label><input type="number" step="0.01" min="0" id="setupBetValue" placeholder="Ex: 10,00"></div>
+      <div><label>Chave Pix para pagamento</label><input type="text" id="setupPixKey" placeholder="CPF, e-mail, telefone ou aleatória"></div>
+    </div>
+    <label>Quantos jogos terá o bolão?</label>
+    <input type="number" id="numMatches" min="1" max="30" value="10" oninput="genMatchRows()">
+    <div class="helper">Informe os times de cada jogo abaixo.</div>
+    <div id="matchRows" style="margin-top:12px;"></div>
+    <button class="primary block" onclick="createBolao()">🏁 Criar bolão</button>
+  </div>`;
+}
+
+function loginView(){
+  const approved = state.participants.filter(p=>p.status==='approved');
+  const guestMode = isInviteView();
+  return `
+  <div class="card">
+    <h2>${esc(state.config.bolaoName)}</h2>
+    <p class="muted">Entre com seu nome, ou faça seu cadastro para participar.</p>
+    <button class="small ghost" onclick="refreshState()">🔄 Atualizar lista</button>
+  </div>
+  ${inviteBox()}
+  ${pixInfoBox()}
+  <div class="card">
+    <h2>Já sou cadastrado</h2>
+    ${approved.length===0
+      ? `<p class="muted">Ainda não há ninguém aprovado. Assim que seu cadastro for aprovado, seu nome aparece aqui.</p>`
+      : approved.map(p=>`<button class="block" style="margin-top:8px;" onclick="loginAsName('${esc(p.name)}')">${esc(p.name)}</button>`).join('')}
+  </div>
+  <div class="card">
+    <h2>Novo por aqui?</h2>
+    <label>Seu nome</label>
+    <input type="text" id="regName" placeholder="Nome completo">
+    <label>Crie uma senha</label>
+    <input type="password" id="regPin" placeholder="Senha">
+    <button class="block" onclick="registerPerson()">Fazer cadastro</button>
+    <div class="helper">Seu cadastro precisa ser aprovado por um moderador ou pelo administrador. Depois de aprovado, é só clicar no seu nome em "Já sou cadastrado" para entrar.</div>
+  </div>
+  ${guestMode ? '' : `
+  <div class="card">
+    <h2>Sou o administrador</h2>
+    <label>Senha de admin</label>
+    <input type="password" id="adminPinInput" placeholder="Senha de administrador">
+    <button class="block" onclick="loginAdmin()">Entrar como admin</button>
+  </div>`}`;
+}
+
+function pixInfoBox(){
+  const val = state.config.betValue;
+  const pix = state.config.pixKey;
+  return `<div class="card">
+    <h2>💰 Valor da aposta &amp; Pix</h2>
+    <div class="pix-grid">
+      <div class="pix-tile"><span class="pix-label">Valor por aposta</span><span class="pix-value">${val?money(val):'a definir'}</span></div>
+      <div class="pix-tile"><span class="pix-label">Chave Pix</span><span class="pix-value mono">${pix?esc(pix):'a definir'}</span></div>
+    </div>
+  </div>`;
+}
+
+function topline(){
+  return `<div class="topline">
+    <div class="who">Bolão: <b>${esc(state.config.bolaoName)}</b> &middot; você é <b>${session.role==='admin'?'Administrador':session.role==='moderator'?'Moderador':'Participante'}</b> (${esc(session.name)})</div>
+    <div class="actions">
+      <button class="small ghost" onclick="refreshState()">🔄 Atualizar</button>
+      <button class="small ghost" onclick="logout()">Sair</button>
+    </div>
+  </div>`;
+}
+
+function tabsBar(active, tabs){
+  return `<div class="tabs">${tabs.map(t=>`<button class="${t.key===active?'active':''}" onclick="view='${t.key}';setFlash(null);render()">${t.label}</button>`).join('')}</div>`;
+}
+
+function adminView(){
+  const tabs=[{key:'panel',label:'⚽ Jogos'},{key:'inscritos',label:'👥 Inscritos'},{key:'moderadores',label:'🛡 Moderadores'},{key:'estatisticas',label:'📊 Estatísticas'},{key:'ranking',label:'🏆 Ranking'}];
+  if(!['panel','inscritos','moderadores','estatisticas','ranking'].includes(view)) view='panel';
+  let html = topline() + tabsBar(view, tabs);
+  if(view==='panel') html += adminMatchesView();
+  if(view==='inscritos') html += inscritosView(true);
+  if(view==='moderadores') html += moderadoresView();
+  if(view==='estatisticas') html += statsView();
+  if(view==='ranking') html += rankingView();
+  return html;
+}
+
+function moderatorView(){
+  const tabs=[{key:'apostar',label:'📝 Meus palpites'},{key:'inscritos',label:'👥 Inscritos'},{key:'participantes',label:'🙋 Participantes'},{key:'estatisticas',label:'📊 Estatísticas'},{key:'ranking',label:'🏆 Ranking'}];
+  if(!['apostar','inscritos','participantes','estatisticas','ranking'].includes(view)) view='apostar';
+  let html = topline() + pixInfoBox() + tabsBar(view, tabs);
+  if(view==='apostar') html += bettingView();
+  if(view==='inscritos') html += inscritosView(false);
+  if(view==='participantes') html += participantsView();
+  if(view==='estatisticas') html += statsView();
+  if(view==='ranking') html += rankingView();
+  return html;
+}
+
+function participantView(){
+  const tabs=[{key:'apostar',label:'📝 Meus palpites'},{key:'participantes',label:'🙋 Participantes'},{key:'estatisticas',label:'📊 Estatísticas'},{key:'ranking',label:'🏆 Ranking'}];
+  if(!['apostar','participantes','estatisticas','ranking'].includes(view)) view='apostar';
+  let html = topline() + inviteBox() + pixInfoBox() + tabsBar(view, tabs);
+  if(view==='apostar') html += bettingView();
+  if(view==='participantes') html += participantsView();
+  if(view==='estatisticas') html += statsView();
+  if(view==='ranking') html += rankingView();
+  return html;
+}
+
+function avatarPairHtml(m){
+  return `<div class="team-pair">
+    <div class="avatar" style="background:${colorFor(m.home)}">${esc(initials(m.home))}</div>
+    <div class="teams-txt">${esc(m.home)}<span class="vs">x</span>${esc(m.away)}</div>
+    <div class="avatar" style="background:${colorFor(m.away)}">${esc(initials(m.away))}</div>
+  </div>`;
+}
+
+function adminMatchesView(){
+  const hasFinished = state.matches.some(m=>m.homeScore!==null && m.homeScore!==undefined);
+  let html = `<div class="card"><h2>Status das apostas <span class="stamp-badge ${state.config.bettingOpen?'on':''}">${state.config.bettingOpen?'abertas':'encerradas'}</span></h2>
+    <button class="${state.config.bettingOpen?'':'green'}" onclick="toggleBetting()">${state.config.bettingOpen?'🔒 Encerrar apostas':'🔓 Reabrir apostas'}</button>
+  </div>`;
+  html += `<div class="card"><h2>🔁 Nova rodada</h2>
+    <p class="muted">Limpe os jogos já encerrados e reabra as apostas para todo mundo poder palpitar de novo. Depois, adicione os novos jogos abaixo.</p>
+    <button class="block" onclick="clearFinishedMatches()" ${hasFinished?'':'disabled'}>🧹 Limpar jogos encerrados e reabrir apostas</button>
+    <label style="margin-top:18px;">Quantos jogos novos deseja adicionar?</label>
+    <input type="number" id="numNewMatches" min="1" max="30" value="5" oninput="genNewMatchRows()">
+    <div id="newMatchRows" style="margin-top:12px;"></div>
+    <button class="green block" onclick="addNewMatches()">➕ Adicionar jogos</button>
+  </div>`;
+  html += `<div class="card"><h2>💰 Valor da aposta &amp; Pix</h2>
+    <div class="row">
+      <div><label>Valor por aposta (R$)</label><input type="number" step="0.01" min="0" id="betValueInput" value="${state.config.betValue!==null&&state.config.betValue!==undefined?state.config.betValue:''}"></div>
+      <div><label>Chave Pix</label><input type="text" id="pixKeyInput" value="${esc(state.config.pixKey||'')}"></div>
+    </div>
+    <button class="block" onclick="saveBetInfo()">Salvar valor e Pix</button>
+  </div>`;
+  html += `<div class="card"><h2>Jogos e resultados</h2>`;
+  state.matches.forEach((m)=>{
+    const done = m.homeScore!==null && m.homeScore!==undefined;
+    html += `<div class="ticket">
+      <div style="flex:1;min-width:230px;">
+        <div class="row">
+          <input type="text" id="team_h_${m.id}" value="${esc(m.home)}">
+          <input type="text" id="team_a_${m.id}" value="${esc(m.away)}">
+        </div>
+        <button class="small ghost" style="margin-top:8px;" onclick="updateTeams('${m.id}')">Salvar nomes</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <input type="number" class="score-input" id="res_h_${m.id}" min="0" step="1" value="${done?m.homeScore:''}">
+        <span>x</span>
+        <input type="number" class="score-input" id="res_a_${m.id}" min="0" step="1" value="${done?m.awayScore:''}">
+      </div>
+      <div class="actions">
+        <button class="small green" onclick="saveResult('${m.id}')">Salvar</button>
+        ${done?`<button class="small ghost" onclick="clearResult('${m.id}')">Limpar</button>`:''}
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+function inviteBox(){
+  return `<div class="card">
+    <h2>🔗 Convidar participantes</h2>
+    <p class="muted">Envie este link para as pessoas se cadastrarem no bolão.</p>
+    <input type="text" id="inviteLinkInput" value="${esc(inviteLink())}" disabled>
+    <button class="green block" onclick="copyInviteLink()">📋 Copiar link de convite</button>
+  </div>`;
+}
+
+function inscritosView(canManageModerators){
+  const pending = state.participants.filter(p=>p.status==='pending');
+  const approved = state.participants.filter(p=>p.status==='approved');
+  let html = inviteBox() + `<div class="card"><h2>Pendentes de aprovação</h2>`;
+  if(pending.length===0) html += `<p class="muted">Nenhum cadastro pendente.</p>`;
+  pending.forEach(p=>{
+    html += `<div class="list-item"><span class="name"><div class="avatar" style="background:${colorFor(p.name)}">${esc(initials(p.name))}</div>${esc(p.name)}</span>
+      <div class="actions">
+        <button class="small green" onclick="approveParticipant('${esc(p.name)}')">✔ Aprovar</button>
+        <button class="small ghost" onclick="rejectParticipant('${esc(p.name)}')">Recusar</button>
+      </div></div>`;
+  });
+  html += `</div><div class="card"><h2>Participantes aprovados</h2>`;
+  if(approved.length===0) html += `<p class="muted">Ninguém aprovado ainda.</p>`;
+  approved.forEach(p=>{
+    const isMod = state.moderators.includes(p.name);
+    const confirmed = betsRecord(p.name).confirmed;
+    html += `<div class="list-item"><span class="name"><div class="avatar" style="background:${colorFor(p.name)}">${esc(initials(p.name))}</div>${esc(p.name)} ${isMod?'<span class="badge done">moderador</span>':''} ${confirmed?'<span class="badge confirmed">apostas confirmadas</span>':''}</span>
+      <div class="actions">
+        <button class="small ghost" onclick="removeParticipant('${esc(p.name)}')">Remover</button>
+      </div></div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+function moderadoresView(){
+  const approved = state.participants.filter(p=>p.status==='approved');
+  let html = `<div class="card"><h2>Selecionar moderadores</h2>
+  <p class="muted">Moderadores podem aprovar novos inscritos.</p>`;
+  if(approved.length===0) html += `<p class="muted">Aprove participantes primeiro.</p>`;
+  approved.forEach(p=>{
+    const isMod = state.moderators.includes(p.name);
+    html += `<div class="list-item"><span class="name"><div class="avatar" style="background:${colorFor(p.name)}">${esc(initials(p.name))}</div>${esc(p.name)}</span>
+      <button class="small ${isMod?'':'green'}" onclick="toggleModerator('${esc(p.name)}')">${isMod?'Remover moderador':'★ Tornar moderador'}</button>
+      </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+function participantsView(){
+  const approved = state.participants.filter(p=>p.status==='approved');
+  let html = `<div class="card"><h2>Participantes do bolão</h2>`;
+  if(approved.length===0) html += `<p class="muted">Ainda não há participantes aprovados.</p>`;
+  approved.forEach(p=>{
+    html += `<div class="list-item"><span class="name"><div class="avatar" style="background:${colorFor(p.name)}">${esc(initials(p.name))}</div>${esc(p.name)}</span></div>`;
+  });
+  html += `<p class="helper">Os palpites de cada participante são privados até o encerramento — aqui você só vê quem está no bolão.</p></div>`;
+  return html;
+}
+
+function statsView(){
+  const approved = state.participants.filter(p=>p.status==='approved');
+  const confirmedCount = approved.filter(p=>betsRecord(p.name).confirmed).length;
+  const pendingConfirm = approved.length - confirmedCount;
+  const finished = state.matches.filter(m=>m.homeScore!==null && m.homeScore!==undefined).length;
+  const total = state.matches.length;
+  const arrecadado = confirmedCount * (state.config.betValue||0);
+  const scores = computeScores();
+  const leader = scores.length ? scores[0] : null;
+  let html = `<div class="card"><h2>📊 Estatísticas do bolão</h2>
+  <div class="stats-grid">
+    <div class="stat-tile"><span class="stat-num">${approved.length}</span><span class="stat-label">participantes</span></div>
+    <div class="stat-tile"><span class="stat-num">${confirmedCount}</span><span class="stat-label">apostas confirmadas</span></div>
+    <div class="stat-tile"><span class="stat-num">${pendingConfirm}</span><span class="stat-label">aguardando confirmação</span></div>
+    <div class="stat-tile"><span class="stat-num">${finished}/${total}</span><span class="stat-label">jogos com resultado</span></div>
+    <div class="stat-tile"><span class="stat-num">${money(arrecadado)}</span><span class="stat-label">total arrecadado</span></div>
+    <div class="stat-tile"><span class="stat-num">${leader?esc(leader.name):'—'}</span><span class="stat-label">líder atual</span></div>
+  </div>
+  <p class="helper">Quadro somente para visualização — os números são calculados automaticamente e ninguém pode editá-los diretamente.</p>
+  </div>`;
+  return html;
+}
+
+function bettingView(){
+  const rec = betsRecord(session.name);
+  const picks = rec.picks || {};
+  const confirmed = rec.confirmed;
+  let html = `<div class="card"><h2>Palpites ${!state.config.bettingOpen?'<span class="badge closed">encerrado</span>':''} ${confirmed?'<span class="badge confirmed">confirmado</span>':''}</h2>`;
+  state.matches.forEach(m=>{
+    const locked = m.homeScore!==null && m.homeScore!==undefined;
+    const b = picks[m.id] || {};
+    const readOnly = locked || !state.config.bettingOpen || confirmed;
+    html += `<div class="ticket">
+      ${avatarPairHtml(m)}
+      <div style="display:flex;align-items:center;gap:8px;">
+        ${locked?`<span class="badge done">final ${m.homeScore}x${m.awayScore}</span>`:''}
+        <input type="number" class="score-input" id="bet_h_${m.id}" min="0" step="1" value="${b.h!==undefined&&b.h!==null?b.h:''}" ${readOnly?'disabled':''}>
+        <span>x</span>
+        <input type="number" class="score-input" id="bet_a_${m.id}" min="0" step="1" value="${b.a!==undefined&&b.a!==null?b.a:''}" ${readOnly?'disabled':''}>
+      </div>
+    </div>`;
+  });
+  if(confirmed){
+    html += `<div class="confirm-box"><p>✅ Suas apostas estão <b>confirmadas</b> e não podem mais ser alteradas. Boa sorte!</p></div>`;
+  } else {
+    html += `<button class="green block" onclick="saveBets()" ${!state.config.bettingOpen?'disabled':''}>💾 Salvar palpites</button>
+    <div class="confirm-box">
+      <p>Depois de revisar todos os seus palpites, confirme para travá-los. Após confirmar, não será mais possível alterar.</p>
+      <button class="primary block" onclick="confirmBets()" ${!state.config.bettingOpen?'disabled':''}>🔒 Confirmar apostas</button>
+    </div>`;
+    if(!state.config.bettingOpen) html += `<p class="helper">As apostas estão encerradas pelo administrador.</p>`;
+  }
+  html += `</div>`;
+  return html;
+}
+
+function rankingView(){
+  const scores = computeScores();
+  let html = `<div class="card"><h2>Classificação</h2>`;
+  if(scores.length===0){ html += `<p class="muted">Ainda não há participantes aprovados.</p></div>`; return html; }
+  html += `<table><thead><tr><th>#</th><th>Nome</th><th>Cravadas</th><th>Acertos</th><th>Pontos</th></tr></thead><tbody>`;
+  scores.forEach((s,i)=>{
+    html += `<tr><td class="rank-num">${i+1}</td><td>${esc(s.name)}</td><td class="pts pts3">${s.exact}</td><td class="pts pts1">${s.correct}</td><td class="pts">${s.points}</td></tr>`;
+  });
+  html += `</tbody></table>
+  <p class="helper" style="margin-top:10px;">3 pontos por placar exato &middot; 1 ponto por acertar só o resultado (vitória ou empate)</p>
+  </div>`;
+  return html;
+}
+
+// ---------- INIT ----------
+async function init(){
+  document.getElementById('content').innerHTML = `<div class="card"><p class="muted">Carregando boletim...</p></div>`;
+  await loadState();
+  render();
+}
+init();
+</script>
+</body>
+</html>
